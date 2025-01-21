@@ -15,7 +15,9 @@ def infer(cfg, dataset, **infer_initializer):
     cuda = infer_initializer['cuda']
     test_set = infer_initializer['test_set']
     preds = []
+    print("dora")
     for ckpt_path, model_name in zip(ckpts_paths_list, ckpts_models_list):
+        print("ava")
         print('=====>> Resuming from the checkpoint: {}\n'.format(ckpt_path))
         af_extractor = get_afextractor(cfg, cuda)
         model = get_models(cfg, dataset, cuda, model_name=model_name)
@@ -26,6 +28,6 @@ def infer(cfg, dataset, **infer_initializer):
         pred = inferer.infer(test_generator)
         preds.append(pred)
         print('\n  Inference finished for {}\n'.format(ckpt_path))
-    inferer.fusion(submissions_dir, predictions_dir, preds)
+        inferer.fusion(submissions_dir, predictions_dir, preds)
 
 

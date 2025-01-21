@@ -70,16 +70,16 @@ def train(cfg, **initializer):
         ###############
         ## Save model
         ###############
-        # if rank == 0 :
-        #     if rem_batch == 0 and it > 0:
-        #         if not cfg['training']['valid_fold'] == 'none':
-        #             if cfg['method'] in ['ein_seld', 'multi_accdoa']:
-        #                 ckptIO.save(epoch_it, it, metrics=valid_metrics['macro'], key_rank='seld_macro', rank_order='low', max_epoch=max_epoch)
-        #             else:
-        #                 ckptIO.save(epoch_it, it, metrics=valid_losses, key_rank='loss_all', rank_order='low', max_epoch=max_epoch)
-        #         else:
-        #             ckptIO.save(epoch_it, it, metrics=train_losses, key_rank='loss_all', rank_order='low', max_epoch=max_epoch)
-        # rank_barrier()
+        if rank == 0 :
+            if rem_batch == 0 and it > 0:
+                if not cfg['training']['valid_fold'] == 'none':
+                    if cfg['method'] in ['ein_seld', 'multi_accdoa']:
+                        ckptIO.save(epoch_it, it, metrics=valid_metrics['macro'], key_rank='seld_macro', rank_order='low', max_epoch=max_epoch)
+                    else:
+                         ckptIO.save(epoch_it, it, metrics=valid_losses, key_rank='loss_all', rank_order='low', max_epoch=max_epoch)
+                else:
+                     ckptIO.save(epoch_it, it, metrics=train_losses, key_rank='loss_all', rank_order='low', max_epoch=max_epoch)
+        rank_barrier()
         ###############
         ## Finish training
         ###############
