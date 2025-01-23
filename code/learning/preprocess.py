@@ -380,6 +380,7 @@ class Preprocess:
                 # feature: [n_chs, n_frames, n_mels]
                 print('feature shape: ', feature.shape)
             elif self.cfg['data']['audio_feature'] == 'salsalite':
+                print("salsalite in scene")
                 feature = af_extractor_mic._get_salsalite(spect)
             with h5py.File(feature_path, 'w') as hf:
                 hf.create_dataset('feature', data=feature, dtype=np.float32)
