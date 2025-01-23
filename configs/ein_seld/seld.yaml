@@ -14,7 +14,7 @@ data:
   sample_rate: 24000
   nfft: 1024
   n_mels: 128
-  hoplen: 400
+  hoplen: 300
   window: hann
   salsalite:
     fmin_doa: 50
