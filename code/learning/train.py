@@ -86,7 +86,12 @@ def train(cfg, **initializer):
         if it == max_epoch * batchNum_per_epoch:
             iterator.close()
             break
-
+        print("yeteo")
+        print(batch_sample["data"].shape)
+        print(batch_sample["sed_label"].shape)
+        print(batch_sample["doa_label"].shape)
+        print(type(batch_sample))
+        print("natta")
         ###############
         ## Train
         ###############
@@ -97,4 +102,7 @@ def train(cfg, **initializer):
         it += 1
         
     iterator.close()
-
+        # print("logmel shape")
+        # print(logmel.shape)
+        # print("iv shape")
+        # print(intensity_vector.shape)

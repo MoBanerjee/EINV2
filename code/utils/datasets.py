@@ -55,6 +55,7 @@ class dacase2022_dask3:
                 self.dataset_dir['dev']['mic'][_synth_dataset] = [self.synth_dir.joinpath(_synth_dataset).joinpath('mic')]
                 self.dataset_dir['dev']['meta'][_synth_dataset] = [self.synth_dir.joinpath(_synth_dataset).joinpath('metadata')]
             
+        print(self.dataset_dir)
         
 
 

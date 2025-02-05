@@ -83,6 +83,7 @@ class Trainer(BaseTrainer):
             self.af_extractor.train()
             batch_x = self.af_extractor(batch_x)
         self.model.train()
+        # need to insert data prepoc steps here and also change mean and std calculation. Or in stft only do it? 
 
         if self.scalar_path.is_file():
             batch_x = (batch_x - self.mean) / self.std

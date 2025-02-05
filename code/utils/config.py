@@ -53,11 +53,11 @@ def get_generator(args, cfg, dataset, generator_type):
     """
     assert generator_type == 'train' or generator_type == 'valid' or generator_type == 'test', \
         "Data generator type '{}' is not 'train', 'valid' or 'test'".format(generator_type)
-        
+    
     batch_sampler = None
     if generator_type == 'train':
         subset = method_dict[cfg['method']].data.UserDataset(cfg, dataset, dataset_type='train')
-
+        
         batch_sampler = method_dict[cfg['method']].data.UserBatchSampler(
             clip_num=len(subset), 
             batch_size=cfg['training']['batch_size'], 

@@ -12,8 +12,8 @@ do
 done
 
 #### Remember to change the corresponding hdf5 directory if you change the default hdf5 directory in the config file
-mkdir -p ./_hdf5/dcase2022task3/label/frame/STARSS22/
-find ./dataset/STARSS22/ -name '*.csv' -type f -print -exec cp {} ./_hdf5/dcase2022task3/label/frame/STARSS22/ \;
+mkdir -p ./_hdf5/dcase2022task3/label/frame/STARSS22/ #inves
+find ./dataset/STARSS22/ -name '*.csv' -type f -print -exec cp {} ./_hdf5/dcase2022task3/label/frame/STARSS22/ \; #inves
 
 CUDA_VISIBLE_DEVICES=0 python3 code/main.py -c $CONFIG_FILE --dataset=$DATASET preprocess --preproc_mode='extract_scalar' 
 

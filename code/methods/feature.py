@@ -50,6 +50,11 @@ class LogmelIntensity_Extractor(nn.Module):
         x = self.stft_extractor(x)
         logmel = self.logmel_extractor(self.spectrogram_extractor(x))
         intensity_vector = self.intensityVector_extractor(x, self.logmel_extractor.melW)
+        # print("logmel shape")
+        # print(logmel.shape)
+        # print("iv shape")
+        # print(intensity_vector.shape)
+        
         out = torch.cat((logmel, intensity_vector), dim=1)
         return out
 

@@ -472,7 +472,7 @@ class Preprocess:
         )
         af_extractor = get_afextractor(self.cfg, cuda_enabled).eval()
         iterator = tqdm(enumerate(data_generator), total=len(data_generator), unit='it')
-        scalar_list = [preprocessing.StandardScaler() for _ in range(self.channels_dict[self.cfg['data']['audio_feature']])]
+        scalar_list = [preprocessing.StandardScaler() for _ in range(self.channels_dict[self.cfg['data']['audio_feature']])] #A list of scalers for the logmel and ivs
         begin_time = timer()
         for it, batch_sample in iterator:
             if it == len(data_generator):
@@ -481,9 +481,15 @@ class Preprocess:
             batch_x.require_grad = False
             if cuda_enabled:
                 batch_x = batch_x.cuda(non_blocking=True)
-            batch_y = af_extractor(batch_x).transpose(0, 1) # (C,N,T,F)
+            batch_y = af_extractor(batch_x).transpose(0, 1) # (C,N,T,F) C-> Channels, N-> Batch Size, T-> Time bins, F-> mel bins
+            # print("pehle")
+            # print(batch_y.shape)
+            # print("intermission")
             C, _, _, F = batch_y.shape
             batch_y = batch_y.reshape(C, -1, F).cpu().numpy()
+            # print("later")
+            # print(batch_y.shape)
+            # print("okayy")
             for i_channel in range(len(scalar_list)):
                 scalar_list[i_channel].partial_fit(batch_y[i_channel])
         iterator.close()
@@ -492,8 +498,10 @@ class Preprocess:
         for i_chan in range(len(scalar_list)):
             mean.append(scalar_list[i_chan].mean_)
             std.append(np.sqrt(scalar_list[i_chan].var_))
+        print("beforemean")
+        print(mean[0].shape)
         mean = np.stack(mean)[None, :, None, :]
-        std = np.stack(std)[None, :, None, :]
+        std = np.stack(std)[None, :, None, :]#here
 
         # save to h5py
         with h5py.File(self.scalar_path, 'w') as hf:
