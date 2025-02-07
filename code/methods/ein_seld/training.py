@@ -2,9 +2,7 @@ from pathlib import Path
 import random
 import sys
 from timeit import default_timer as timer
-from methods.ein_seld.crop import Crop
-from methods.ein_seld.freqshift import FreqShift
-from methods.ein_seld.specaug import SpecAugment
+from augmix import augment_and_mix
 import h5py
 import numpy as np
 import torch
@@ -86,21 +84,7 @@ class Trainer(BaseTrainer):
             batch_x = self.af_extractor(batch_x)
         self.model.train()
         # need to insert data prepoc steps here and also change mean and std calculation. Or in stft only do it? 
-        cropper=Crop()
-        shifter=FreqShift()
-        spec=SpecAugment()
-        batch_x2,batch_t2= cropper(batch_x,batch_target)
-        batch_x3,batch_t3= shifter(batch_x,batch_target)
-        batch_x4,batch_t4= shifter(batch_x,batch_target)
-        batch_x=torch.cat((batch_x, batch_x2,batch_x3,batch_x4), dim=0)
-        for kv in batch_target:
-            if(type(batch_target[kv])==list):
-                batch_target[kv].append(batch_t2[kv])
-                batch_target[kv].append(batch_t3[kv])
-                batch_target[kv].append(batch_t4[kv])
-            else:
-                batch_target[kv]=torch.cat((batch_target[kv], batch_t2[kv],batch_t3[kv],batch_t4[kv]), dim=0)
-       
+        batch_x,batch_target = augment_and_mix(batch_x, batch_target)
         print(batch_x.shape)
         if self.scalar_path.is_file():
             batch_x = (batch_x - self.mean) / self.std

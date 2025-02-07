@@ -8,7 +8,7 @@ class FreqShift:
     """
     This data augmentation random shift the spectrogram up or down.
     """
-    def __init__(self, p=0.5, shift_range=None, direction=None, mode='reflect'):
+    def __init__(self, p=0.5, shift_range=15, direction=None, mode='reflect'): #checked
         self.shift_range = shift_range
         self.direction = direction
         self.mode = mode

@@ -3,7 +3,7 @@ import torch
 import random
 
 class Rotation:
-    def __init__(self,  p, rotation_type):
+    def __init__(self,  p=0.8, rotation_type=48): #checked
         self.p = p
         self.type = rotation_type
     

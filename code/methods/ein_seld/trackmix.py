@@ -4,7 +4,7 @@ from torch.distributions.beta import Beta
 
 
 class TrackMix:
-    def __init__(self, alpha=0.5):
+    def __init__(self, alpha=0.5): #checked
         """ Mixup for data augmentation
         Args:
             alpha: 0.0-1.0, 0.5

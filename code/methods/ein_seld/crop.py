@@ -1,7 +1,7 @@
 import torch
 
 class Crop:
-    def __init__(self, T=8, F=8, mC=2, mask_value=0.):
+    def __init__(self, T=8, F=4, mC=4, mask_value=0.): #checked
         self.T = T
         self.F = F
         self.mC = mC

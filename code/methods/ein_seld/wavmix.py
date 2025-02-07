@@ -4,7 +4,7 @@ from torch.distributions.beta import Beta
 import random
 # for waveforms
 class WavMix:
-    def __init__(self, alpha, p) -> None:
+    def __init__(self, alpha=0.5, p=0.5) -> None: #checked
         ''' Raw wav Time-domain mixing
         Args:
             alpha: 0.0-1.0, 0.5
