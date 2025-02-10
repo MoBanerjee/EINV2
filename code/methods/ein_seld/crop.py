@@ -8,6 +8,7 @@ class Crop:
         self.mask_value = mask_value
     
     def __call__(self, batch_x, batch_target):
+
         N, C, T_dim, F_dim = batch_x.shape
 
         device = batch_x.device
@@ -28,5 +29,5 @@ class Crop:
         mask = (((mask_t >= mask_start_t) & (mask_t < mask_end_t)) & ((mask_f >= mask_start_f) & (mask_f < mask_end_f)))
         mask = torch.any(mask, dim=0)
         batch_x = batch_x.masked_fill(mask, self.mask_value)
-        
+       
         return batch_x, batch_target

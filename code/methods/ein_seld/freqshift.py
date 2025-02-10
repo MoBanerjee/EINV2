@@ -15,10 +15,12 @@ class FreqShift:
         self.p = p
 
     def __call__(self, batch_x, batch_target):
+
         N, _, _, F_dim = batch_x.shape
         for n in range(N):
             if self.p > np.random.uniform():
                 batch_x[n] = self.transform(batch_x[n], F_dim)
+        
         return batch_x, batch_target
 
     def transform(self, x, F_dim):

@@ -8,6 +8,8 @@ class Rotation:
         self.type = rotation_type
     
     def __call__(self, batch_x, batch_target):
+        batch_iv=batch_x[:,4:, :,:]
+        batch_x=batch_x[:,:4, :,:]
         N = batch_x.shape[0]
         
         for n in range(N):
@@ -20,9 +22,9 @@ class Rotation:
                 label_key = 'accdoa_label'
                 T, C = batch_target['accdoa_label'].shape[1:]
                 doa = batch_target['accdoa_label'][n].reshape(T, 3, C//3).transpose(1, 2)
-            elif 'doa_label' in batch_target.keys():
-                label_key = 'doa_label'
-                doa = batch_target['doa_label'][n]
+            elif 'doa' in batch_target.keys():
+                label_key = 'doa'
+                doa = batch_target['doa'][n]
             elif 'adpit_label' in batch_target.keys():
                 label_key = 'adpit_label'
                 seddoa = batch_target[label_key][n].transpose(-1, -2)
@@ -40,7 +42,7 @@ class Rotation:
                 y = torch.cat([seddoa[..., :1], y], dim=-1)
                 y = y.transpose(-1, -2)
             batch_target[label_key][n] = y
-                
+        batch_x=torch.cat((batch_x, batch_iv), dim=1)
         return batch_x, batch_target
 
 

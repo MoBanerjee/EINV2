@@ -13,11 +13,11 @@
 # limitations under the License.
 # ==============================================================================
 """Reference implementation of AugMix's data augmentation method in numpy."""
-import augmentations
+import methods.ein_seld.augmentations as augmentations
 import numpy as np
 import torch
 from methods.ein_seld.rotate import Rotation
-
+import copy
 
 def apply_op(op, batch_x,batch_target):
 
@@ -34,30 +34,31 @@ def augment_and_mix(batch_x,batch_target, width=3, depth=-1):
       from [1, 3]
 """
 
-
+  batch_x_ground=batch_x.clone()
+  batch_target_ground=copy.deepcopy(batch_target)
   for i in range(width):
-    batch_x_aug = batch_x.copy()
-    batch_target_aug = batch_target.copy()
+    batch_x_aug = batch_x.clone()
+    batch_target_aug = copy.deepcopy(batch_target)
     d = depth if depth > 0 else np.random.randint(1, 4)
     for _ in range(d):
       op = np.random.choice(augmentations.augmentations)
       batch_x_aug,batch_target_aug = apply_op(op,batch_x_aug,batch_target_aug)
     # Preprocessing commutes since all coefficients are convex
-    batch_x=torch.cat((batch_x, batch_x_aug), dim=0)
-    for kv in batch_target:
-        if(type(batch_target[kv])==list):
-            batch_target[kv].append(batch_target_aug[kv])
+    batch_x_ground=torch.cat((batch_x_ground, batch_x_aug), dim=0)
+    for kv in batch_target_ground:
+        if(type(batch_target_ground[kv])==list):
+            batch_target_ground[kv].append(batch_target_aug[kv])
 
         else:
-            batch_target[kv]=torch.cat((batch_target[kv], batch_target_aug[kv]), dim=0)
+            batch_target_ground[kv]=torch.cat((batch_target_ground[kv], batch_target_aug[kv]), dim=0)
   rot=Rotation()
   batch_x_rot,batch_target_rot=rot(batch_x,batch_target)
-  batch_x=torch.cat((batch_x, batch_x_rot), dim=0)
-  for kv in batch_target:
-    if(type(batch_target[kv])==list):
-        batch_target[kv].append(batch_target_rot[kv])
+  batch_x_ground=torch.cat((batch_x_ground, batch_x_rot), dim=0)
+  for kv in batch_target_ground:
+    if(type(batch_target_ground[kv])==list):
+        batch_target_ground[kv].append(batch_target_rot[kv])
     
     else:
-        batch_target[kv]=torch.cat((batch_target[kv], batch_target_rot[kv]), dim=0)
+        batch_target_ground[kv]=torch.cat((batch_target_ground[kv], batch_target_rot[kv]), dim=0)
 
-  return batch_x,batch_target
+  return batch_x_ground,batch_target_ground

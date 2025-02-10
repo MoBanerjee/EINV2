@@ -3,11 +3,13 @@ from torchaudio import functional as F
 
 
 class SpecAugment:
-    def __init__(self, T=40, F=8, mT=4, mF=2, mask_value=0.): #checked
+    def __init__(self, T=20, F=8, mT=4, mF=2, mask_value=0.):
         self.T = T
         self.F = F
         self.mT = mT
         self.mF = mF
+        
+        
         self.mask_value = mask_value
 
     def __call__(self, batch_x, batch_target):
@@ -18,12 +20,14 @@ class SpecAugment:
         Returns:
             batch_x (torch.Tensor): (N, C, T, F) shape
             batch_target (dict): dictionary of target tensors
+
         """
-        
-        N, C, T_dim = batch_x.shape
+        batch_iv=batch_x[:,4:, :,:]
+        batch_x=batch_x[:,:4, :,:]
         xy_ratio=batch_x.shape[-2]/batch_target["sed"].shape[1]
         self.xy_ratio = xy_ratio
         self.T_y = int(self.T / self.xy_ratio)
+        N, C, T_dim, F_dim = batch_x.shape
         T_y_dim = int(T_dim / self.xy_ratio)
 
         dim = batch_x.dim()
@@ -60,6 +64,6 @@ class SpecAugment:
         #### MASK in the frequency dimension
         for _ in range(self.mF):
             batch_x = F.mask_along_axis_iid(batch_x, axis=3, mask_value=self.mask_value, mask_param=self.F)
-
+        batch_x=torch.cat((batch_x, batch_iv), dim=1)
         return batch_x, batch_target
     

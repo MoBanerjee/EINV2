@@ -2,7 +2,7 @@ from pathlib import Path
 import random
 import sys
 from timeit import default_timer as timer
-from augmix import augment_and_mix
+from methods.ein_seld.augmix import augment_and_mix
 import h5py
 import numpy as np
 import torch

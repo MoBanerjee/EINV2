@@ -19,16 +19,17 @@ class TrackMix:
 
         N = len(idx_ov1)
         if N == 0:
+            
             return batch_x, batch_target
         
-        label_keys = [k for k in batch_target.keys() if 'label' in k]
+        label_keys = [k for k in batch_target.keys() if( 'sed' in k or 'doa' in k)]
         label_key = label_keys[0]
         lams = self.beta.sample((N,)).to(batch_x.device)
         x_shape = (N, ) + (1,) * (batch_x.ndim - 1)
         lams_x = lams.reshape(x_shape)
         if len(label_keys) == 2: # sed_label and doa_label
-            y_sed_shape = (N, ) + (1,) * (batch_target['sed_label'].ndim - 2)
-            y_doa_shape = (N, ) + (1,) * (batch_target['doa_label'].ndim - 2)
+            y_sed_shape = (N, ) + (1,) * (batch_target['sed'].ndim - 2)
+            y_doa_shape = (N, ) + (1,) * (batch_target['doa'].ndim - 2)
             lams_y_sed = lams.reshape(y_sed_shape)
             lams_y_doa = lams.reshape(y_doa_shape)
         else: # accdoa_label or adpit_label
@@ -37,20 +38,16 @@ class TrackMix:
         
         batch_x[idx_ov1] = lams_x * batch_x[idx_ov1] + (1. - lams_x) * batch_x[new_idx_ov1]
         if len(label_keys) == 2: # sed_label and doa_label
-            batch_target['sed_label'][idx_ov1] = torch.stack((
-                lams_y_sed * batch_target['sed_label'][idx_ov1][:, :, 0],
-                (1. - lams_y_sed) * batch_target['sed_label'][new_idx_ov1][:, :, 0], 
-                torch.zeros_like(batch_target['sed_label'][idx_ov1][:, :, 0])
+            batch_target['sed'][idx_ov1] = torch.stack((
+                lams_y_sed * batch_target['sed'][idx_ov1][:, :, 0],
+                (1. - lams_y_sed) * batch_target['sed'][new_idx_ov1][:, :, 0], 
+                torch.zeros_like(batch_target['sed'][idx_ov1][:, :, 0])
                 ), dim=2)
-            # batch_target['doa_label'][idx_ov1] = torch.stack((
-            #     lams_y_doa * batch_target['doa_label'][idx_ov1][:, :, 0],
-            #     (1. - lams_y_doa) * batch_target['doa_label'][new_idx_ov1][:, :, 0], 
-            #     torch.zeros_like(batch_target['doa_label'][idx_ov1][:, :, 0])
-            #     ), dim=2)
-            batch_target['doa_label'][idx_ov1] = torch.stack((
-                batch_target['doa_label'][idx_ov1][:, :, 0],
-                batch_target['doa_label'][new_idx_ov1][:, :, 0], 
-                torch.zeros_like(batch_target['doa_label'][idx_ov1][:, :, 0])
+
+            batch_target['doa'][idx_ov1] = torch.stack((
+                batch_target['doa'][idx_ov1][:, :, 0],
+                batch_target['doa'][new_idx_ov1][:, :, 0], 
+                torch.zeros_like(batch_target['doa'][idx_ov1][:, :, 0])
                 ), dim=2)
         elif label_key == 'accdoa_label':
             batch_target[label_key][idx_ov1] = lams_y * batch_target[label_key][idx_ov1] + \
@@ -72,5 +69,5 @@ class TrackMix:
         batch_target['ov'] = np.array(batch_target['ov'])
         batch_target['ov'][idx_ov1] = ['2'] * N
         batch_target['ov'] = list(batch_target['ov'])
-
+        
         return batch_x, batch_target
